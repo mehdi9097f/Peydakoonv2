@@ -1,0 +1,96 @@
+<!DOCTYPE html><html lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>کانفیگ‌یاب V2Ray</title>
+  <style>
+    body {
+      font-family: Tahoma, sans-serif;
+      background-color: #111;
+      color: #eee;
+      padding: 20px;
+      text-align: center;
+    }
+    #configs {
+      white-space: pre-wrap;
+      background: #222;
+      padding: 10px;
+      border-radius: 10px;
+      margin-top: 20px;
+      max-height: 500px;
+      overflow-y: auto;
+      direction: ltr;
+    }
+    button {
+      padding: 10px 15px;
+      margin: 5px;
+      border: none;
+      border-radius: 5px;
+      background: #444;
+      color: white;
+      cursor: pointer;
+    }
+    a {
+      color: #4fc3f7;
+    }
+  </style>
+</head>
+<body>
+  <h2>🔍 کانفیگ‌یاب V2Ray</h2>
+  <p>دریافت و نمایش کانفیگ‌های VMess / VLESS / Trojan سالم</p>
+  <div>
+    <button onclick="fetchConfigs()">دریافت کانفیگ‌ها</button>
+    <button onclick="copyAll()">📋 کپی همه</button>
+  </div>
+  <div id="count"></div>
+  <div id="configs"></div>
+  <p>منبع: <a href="https://t.me/peidakoon" target="_blank">@peidakoon</a></p>
+  <script>
+    async function fetchConfigs() {
+      const sources = [
+        'https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/sub/sub_merge.txt',
+        'https://raw.githubusercontent.com/pojiezhiyuanjun/freev2/master/1',
+        'https://raw.githubusercontent.com/aiboboxx/v2rayfree/main/v2'
+      ];let allConfigs = '';
+  for (const url of sources) {
+    try {
+      const res = await fetch(url);
+      if (!res.ok) continue;
+      const text = await res.text();
+      allConfigs += '\n' + text;
+    } catch (e) {
+      console.warn('خطا در دریافت:', url);
+    }
+  }
+
+  const regex = /(vmess|vless|trojan):\/\/[^\s"']+/g;
+  const found = allConfigs.match(regex) || [];
+
+  const container = document.getElementById("configs");
+  const count = document.getElementById("count");
+
+  container.innerHTML = '';
+  found.forEach((cfg, i) => {
+    const div = document.createElement("div");
+    div.textContent = cfg;
+    const btn = document.createElement("button");
+    btn.textContent = "کپی";
+    btn.onclick = () => navigator.clipboard.writeText(cfg);
+    div.appendChild(btn);
+    container.appendChild(div);
+  });
+
+  count.textContent = `✅ ${found.length} کانفیگ پیدا شد.`;
+}
+
+function copyAll() {
+  const text = Array.from(document.querySelectorAll('#configs div'))
+    .map(div => div.firstChild.textContent)
+    .join('\n');
+  navigator.clipboard.writeText(text);
+  alert("✅ همه‌ی کانفیگ‌ها کپی شد");
+}
+
+  </script>
+</body>
+</html>
